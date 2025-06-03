@@ -7,7 +7,7 @@
     content="width=device-width, initial-scale=1.0"
   />
   <title>Advance Bot (Adbot)</title>
-  <!-- Import Roboto from Google Fonts for cleaner typography -->
+  <!-- Import Roboto for cleaner typography -->
   <link 
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" 
     rel="stylesheet" 
@@ -22,20 +22,20 @@
       box-sizing: border-box;
     }
     body {
-      font-family: 'Roboto', sans-serif; /* Clean, professional typeface */ 
-      background-color: #F3F4F6; /* Light gray background (secondary) */ 
+      font-family: 'Roboto', sans-serif;
+      background-color: #F3F4F6;
       display: flex;
       flex-direction: column;
-      height: 100vh; /* Full viewport height for responsive layout */ 
-      color: #1F2937; /* Dark gray text for high contrast */ 
+      height: 100vh;
+      color: #1F2937;
     }
 
     /* ----------------------------------------------------
        Header: Branding & Title
     ---------------------------------------------------- */
     header {
-      background-color: #1E3A8A; /* Primary blue (60%) */ 
-      color: #FFFFFF; 
+      background-color: #1E3A8A;
+      color: #FFFFFF;
       padding: 16px 24px;
       display: flex;
       align-items: center;
@@ -43,8 +43,9 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     header img {
-      width: 32px;
-      height: 32px;
+      width: 85px;
+      height: auto;
+      border-radius: 20px;
     }
     header h1 {
       font-size: 1.5rem;
@@ -60,13 +61,70 @@
       flex-direction: column;
       padding: 16px;
       overflow-y: auto;
-      animation: fadeIn 0.3s ease-out; /* Fade-in for entire chat area */ 
+      animation: fadeIn 0.3s ease-out;
     }
     #chat {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    /* ----------------------------------------------------
+       Options Dropdown (Hidden by Default)
+       Positioned above the footer
+    ---------------------------------------------------- */
+    .options-dropdown {
+      position: absolute;
+      bottom: 64px; /* height of footer (approx 56px) + some gap */
+      left: 16px;   /* align with input’s left edge (accounting for padding) */
+      background-color: #FFFFFF;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: none; /* Hidden initially */
+      flex-direction: column;
+      min-width: calc(100% - 32px); /* almost full width, with small margins */
+      z-index: 2;
+    }
+    .options-dropdown.show {
+      display: flex;
+      animation: slideUp 0.2s ease-out;
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .options-dropdown button {
+      padding: 10px 16px;
+      background-color: #FFFFFF;
+      border: none;
+      border-bottom: 1px solid #E5E7EB;
+      font-size: 0.9rem;
+      color: #1F2937;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .options-dropdown button:last-child {
+      border-bottom: none;
+    }
+    .options-dropdown button:hover {
+      background-color: #F3F4F6;
+    }
+    .options-dropdown button.active {
+      background-color: #FEF3C7; /* Paler accent when toggled */
+      color: #703BDB;            /* Darker accent text */
     }
 
     /* ----------------------------------------------------
@@ -82,74 +140,97 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       opacity: 0;
       transform: translateY(10px);
-      animation: fadeIn 0.3s forwards; /* Smooth fade-in & slide-up */ 
+      animation: fadeIn 0.3s forwards;
     }
     .bubble.user {
       align-self: flex-end;
-      background-color: #1E3A8A; /* Primary blue for user (60%) */ 
+      background-color: #1E3A8A;
       color: #FFFFFF;
       border-bottom-right-radius: 6px;
-      animation-delay: 0.1s; /* Staggered appearance */ 
+      animation-delay: 0.1s;
     }
     .bubble.ai {
       align-self: flex-start;
-      background-color: #FFFFFF; /* White (secondary) */ 
+      background-color: #FFFFFF;
       color: #1F2937;
       border-bottom-left-radius: 6px;
       animation-delay: 0.2s;
     }
     .bubble.error {
       align-self: flex-start;
-      background-color: #FEE2E2; /* Pale red for errors */ 
-      color: #B91C1C; /* Dark red text */ 
+      background-color: #FEE2E2;
+      color: #B91C1C;
       border-bottom-left-radius: 6px;
       animation-delay: 0.2s;
     }
     .bubble.typing {
       align-self: flex-start;
-      background-color: #E5E7EB; /* Very light gray for typing indicator */ 
-      color: #6B7280; /* Medium gray text */ 
+      background-color: #E5E7EB;
+      color: #6B7280;
       border-bottom-left-radius: 6px;
       font-style: italic;
-      animation-delay: 0; /* Show immediately */
+      animation-delay: 0;
     }
     .timestamp {
       display: block;
       margin-top: 8px;
       font-size: 0.65rem;
-      color: rgba(31, 41, 55, 0.5); /* 50% dark gray */ 
+      color: rgba(31, 41, 55, 0.5);
       text-align: right;
     }
 
     /* ----------------------------------------------------
-       Input Area (Footer)
+       Input Area (Footer) with Plus Toggle
     ---------------------------------------------------- */
     footer {
+      position: relative;
       display: flex;
-      padding: 12px 16px;
-      background-color: #FFFFFF; /* White (secondary) */ 
-      border-top: 1px solid #E5E7EB; /* Light gray border */ 
       align-items: center;
-      gap: 12px;
+      padding: 12px 16px;
+      background-color: #FFFFFF;
+      border-top: 1px solid #E5E7EB;
+      gap: 8px;
       box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+      z-index: 1;
     }
     footer input {
       flex: 1;
       padding: 12px 16px;
-      border: 2px solid #D1D5DB; /* Gray border */ 
+      border: 2px solid #D1D5DB;
       border-radius: 24px;
       font-size: 1rem;
       outline: none;
-      transition: border-color 0.2s;
-      opacity: 1;              /* default state */
       transition: border-color 0.2s, opacity 0.2s;
+      opacity: 1;
     }
     footer input:focus {
-      border-color: #1E3A8A; /* Primary blue focus ring */ 
+      border-color: #1E3A8A;
       box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
     }
-    footer button {
-      background-color: #F97316; /* Accent orange (10%) */ 
+    /* Plus toggle button placed directly beside input */
+    #toggleOptionsBtn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #1E3A8A;
+      color: #FFFFFF;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+    #toggleOptionsBtn:hover {
+      background-color: #16357a;
+    }
+    #toggleOptionsBtn:active {
+      transform: scale(0.9);
+    }
+    footer button.send-btn {
+      background-color: #F97316;
       border: none;
       color: #FFFFFF;
       padding: 12px 20px;
@@ -157,23 +238,22 @@
       font-weight: 500;
       border-radius: 24px;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
+      transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
       display: flex;
       align-items: center;
       gap: 8px;
-      opacity: 1;              /* default state */
-      transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
+      opacity: 1;
     }
-    footer button:hover {
-      background-color: #EA580C; /* Darker orange on hover */ 
+    footer button.send-btn:hover {
+      background-color: #EA580C;
     }
-    footer button:active {
-      transform: scale(0.97); /* Subtle “pressed” effect */ 
+    footer button.send-btn:active {
+      transform: scale(0.97);
     }
-    footer button:disabled {
-      background-color: #FDBA74; /* Light orange when disabled */ 
+    footer button.send-btn:disabled {
+      background-color: #FDBA74;
       cursor: not-allowed;
-      opacity: 0.6; /* dimmed when disabled */
+      opacity: 0.6;
     }
 
     /* ----------------------------------------------------
@@ -194,10 +274,11 @@
 <body>
   <!-- Header with branding -->
   <header>
-    <!-- Placeholder for a robot icon; replace src with your logo -->
-    <img src="https://storage.googleapis.com/chatfuel-cms-staging/pic/lg_types_of_chatbots_2424fa847a/lg_types_of_chatbots_2424fa847a.png" alt="Adbot Logo" 
-    style="width: 85px; height: auto ; border-radius: 20px;"
-    /> 
+    <img 
+      src="https://storage.googleapis.com/chatfuel-cms-staging/pic/lg_types_of_chatbots_2424fa847a/lg_types_of_chatbots_2424fa847a.png" 
+      alt="Adbot Logo"
+      style="width: 85px; height: auto; border-radius: 20px;"
+    />
     <h1>Advance Bot (Adbot)</h1>
   </header>
 
@@ -206,25 +287,31 @@
     <div id="chat"></div>
   </main>
 
-  <!-- Input area -->
+  <!-- Input area with plus toggle -->
   <footer>
+    <button id="toggleOptionsBtn" aria-label="Show options"  style="width: 46px; height: 35px"
+    >+</button>
     <input
       id="userText"
       type="text"
       placeholder="Type a message..."
       autocomplete="off"
     />
-    <button id="sendBtn" disabled>
-      <!-- Send icon (paper plane) via Unicode; you can swap for an SVG if desired -->
-      📤 Send
-    </button>
+    <button id="sendBtn" class="send-btn" disabled>📤 Send</button>
+
+    <!-- Options dropdown: hidden until plus is clicked -->
+    <div class="options-dropdown" id="optionsDropdown">
+      <button class="option-btn" id="opt-web-search">🔎 Web Search</button>
+      <button class="option-btn" id="opt-news">📰 News</button>
+      <button class="option-btn" id="opt-weather">☀️ Weather</button>
+      <button class="option-btn" id="opt-send-mail">✉️ Send Mail</button>
+      <button class="option-btn" id="opt-youtube-sum">▶️ YouTube Summarize</button>
+    </div>
   </footer>
 
   <script>
     (function () {
-      // Deployed endpoint
-      const API_ENDPOINT =
-         "https://advance-chatbot-fast-api.onrender.com/chat";
+      const API_ENDPOINT = "https://advance-chatbot-fast-api.onrender.com/chat";
 
       let threadId = null;
       let typingInterval = null;
@@ -234,9 +321,43 @@
       const userInput = document.getElementById("userText");
       const sendBtn = document.getElementById("sendBtn");
 
+      const toggleOptionsBtn = document.getElementById("toggleOptionsBtn");
+      const optionsDropdown = document.getElementById("optionsDropdown");
+      const optionBtns = optionsDropdown.querySelectorAll(".option-btn");
+
       // Enable send button only if there's text
       userInput.addEventListener("input", () => {
         sendBtn.disabled = userInput.value.trim().length === 0;
+      });
+
+      // Toggle dropdown when plus is clicked
+      toggleOptionsBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent the document click listener from immediately closing it
+        optionsDropdown.classList.toggle("show");
+        // Rotate plus to “×” when open
+        if (optionsDropdown.classList.contains("show")) {
+          toggleOptionsBtn.style.transform = "rotate(45deg)";
+        } else {
+          toggleOptionsBtn.style.transform = "rotate(0deg)";
+        }
+      });
+
+      // Clicking outside hides the dropdown
+      document.addEventListener("click", (e) => {
+        if (
+          !optionsDropdown.contains(e.target) &&
+          !toggleOptionsBtn.contains(e.target)
+        ) {
+          optionsDropdown.classList.remove("show");
+          toggleOptionsBtn.style.transform = "rotate(0deg)";
+        }
+      });
+
+      // Toggle “active” state on each option button
+      optionBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          btn.classList.toggle("active");
+        });
       });
 
       // Handle send button click
@@ -244,18 +365,11 @@
         const text = userInput.value.trim();
         if (!text) return;
 
-        // 1) Append user bubble immediately
         appendBubble(text, "user");
         userInput.value = "";
         sendBtn.disabled = true;
-
-        // 2) Disable input box (make it less visible & non‐functional)
         disableInput();
-
-        // 3) Show typing indicator (… cycling) until response arrives
         showTypingIndicator();
-
-        // 4) Fetch AI response
         fetchAIResponse(text);
       });
 
@@ -266,7 +380,6 @@
         }
       });
 
-      // Append a chat bubble to the chat area
       function appendBubble(text, type) {
         const bubble = document.createElement("div");
         bubble.classList.add("bubble", type);
@@ -282,10 +395,9 @@
         bubble.appendChild(ts);
 
         chatEl.appendChild(bubble);
-        scrollChatToBottom(); // Always scroll when a new bubble is added
+        scrollChatToBottom();
       }
 
-      // Disable input & button styling
       function disableInput() {
         userInput.disabled = true;
         sendBtn.disabled = true;
@@ -293,31 +405,28 @@
         sendBtn.style.opacity = "0.6";
       }
 
-      // Re-enable input & button styling
       function enableInput() {
         userInput.disabled = false;
-        sendBtn.disabled = true; // remain disabled until user types again
+        sendBtn.disabled = true;
         userInput.style.opacity = "1";
         sendBtn.style.opacity = "1";
         userInput.focus();
       }
 
-      // Show a typing indicator that cycles “…”, “…..”, “…” etc.
       function showTypingIndicator() {
         typingBubble = document.createElement("div");
         typingBubble.classList.add("bubble", "typing");
-        typingBubble.textContent = ""; // start empty
+        typingBubble.textContent = "";
         chatEl.appendChild(typingBubble);
 
         let dotCount = 0;
         typingInterval = setInterval(() => {
-          dotCount = (dotCount + 1) % 4; // 0 → 1 → 2 → 3 → 0 …
+          dotCount = (dotCount + 1) % 4;
           typingBubble.textContent = ".".repeat(dotCount);
-          scrollChatToBottom(); // keep scrolling as the dots update
+          scrollChatToBottom();
         }, 500);
       }
 
-      // Remove typing indicator
       function removeTypingIndicator() {
         if (typingInterval) {
           clearInterval(typingInterval);
@@ -329,16 +438,13 @@
         }
       }
 
-      // Scroll chat container down to show latest message
       function scrollChatToBottom() {
-        // Smooth scroll:
         chatEl.scrollTo({
           top: chatEl.scrollHeight,
           behavior: "smooth"
         });
       }
 
-      // Send message to API and handle response
       async function fetchAIResponse(message) {
         try {
           const response = await fetch(API_ENDPOINT, {
@@ -346,10 +452,7 @@
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              message: message,
-              thread_id: threadId,
-            }),
+            body: JSON.stringify({ message, thread_id: threadId }),
           });
 
           if (!response.ok) {
@@ -357,19 +460,11 @@
           }
 
           const data = await response.json();
-          threadId = data.thread_id; // preserve thread for next turn
-
-          // 1) Remove the typing indicator
+          threadId = data.thread_id;
           removeTypingIndicator();
-
-          // 2) Append the actual AI bubble
           appendBubble(data.response, "ai");
-
-          // 3) Re-enable input area
           enableInput();
-
         } catch (err) {
-          // On error: remove typing indicator, show error bubble, re-enable input
           removeTypingIndicator();
           appendBubble(`Error: ${err.message}`, "error");
           enableInput();
