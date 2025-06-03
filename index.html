@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Advance Bot (Adbot)</title>
+  <!-- Import Roboto from Google Fonts for cleaner typography -->
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" 
+    rel="stylesheet" 
+  />
+  <style>
+    /* ----------------------------------------------------
+       Global Resets & Base Styles
+    ---------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif; /* Clean, professional typeface */ 
+      background-color: #F3F4F6; /* Light gray background (secondary) */ 
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Full viewport height for responsive layout */ 
+      color: #1F2937; /* Dark gray text for high contrast */ 
+    }
+
+    /* ----------------------------------------------------
+       Header: Branding & Title
+    ---------------------------------------------------- */
+    header {
+      background-color: #1E3A8A; /* Primary blue (60%) */ 
+      color: #FFFFFF; 
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    header img {
+      width: 32px;
+      height: 32px;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    /* ----------------------------------------------------
+       Main Chat Container
+    ---------------------------------------------------- */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease-out; /* Fade-in for entire chat area */ 
+    }
+    #chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ----------------------------------------------------
+       Chat Bubbles & Animations
+    ---------------------------------------------------- */
+    .bubble {
+      max-width: 70%;
+      padding: 14px 18px;
+      border-radius: 20px;
+      position: relative;
+      line-height: 1.5;
+      word-wrap: break-word;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.3s forwards; /* Smooth fade-in & slide-up */ 
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background-color: #1E3A8A; /* Primary blue for user (60%) */ 
+      color: #FFFFFF;
+      border-bottom-right-radius: 6px;
+      animation-delay: 0.1s; /* Staggered appearance */ 
+    }
+    .bubble.ai {
+      align-self: flex-start;
+      background-color: #FFFFFF; /* White (secondary) */ 
+      color: #1F2937;
+      border-bottom-left-radius: 6px;
+      animation-delay: 0.2s;
+    }
+    .bubble.error {
+      align-self: flex-start;
+      background-color: #FEE2E2; /* Pale red for errors */ 
+      color: #B91C1C; /* Dark red text */ 
+      border-bottom-left-radius: 6px;
+      animation-delay: 0.2s;
+    }
+    .bubble.typing {
+      align-self: flex-start;
+      background-color: #E5E7EB; /* Very light gray for typing indicator */ 
+      color: #6B7280; /* Medium gray text */ 
+      border-bottom-left-radius: 6px;
+      font-style: italic;
+      animation-delay: 0; /* Show immediately */
+    }
+    .timestamp {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.65rem;
+      color: rgba(31, 41, 55, 0.5); /* 50% dark gray */ 
+      text-align: right;
+    }
+
+    /* ----------------------------------------------------
+       Input Area (Footer)
+    ---------------------------------------------------- */
+    footer {
+      display: flex;
+      padding: 12px 16px;
+      background-color: #FFFFFF; /* White (secondary) */ 
+      border-top: 1px solid #E5E7EB; /* Light gray border */ 
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+    }
+    footer input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #D1D5DB; /* Gray border */ 
+      border-radius: 24px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      opacity: 1;              /* default state */
+      transition: border-color 0.2s, opacity 0.2s;
+    }
+    footer input:focus {
+      border-color: #1E3A8A; /* Primary blue focus ring */ 
+      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+    }
+    footer button {
+      background-color: #F97316; /* Accent orange (10%) */ 
+      border: none;
+      color: #FFFFFF;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 1;              /* default state */
+      transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
+    }
+    footer button:hover {
+      background-color: #EA580C; /* Darker orange on hover */ 
+    }
+    footer button:active {
+      transform: scale(0.97); /* Subtle “pressed” effect */ 
+    }
+    footer button:disabled {
+      background-color: #FDBA74; /* Light orange when disabled */ 
+      cursor: not-allowed;
+      opacity: 0.6; /* dimmed when disabled */
+    }
+
+    /* ----------------------------------------------------
+       Fade-in Animation Keyframes
+    ---------------------------------------------------- */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with branding -->
+  <header>
+    <!-- Placeholder for a robot icon; replace src with your logo -->
+    <img src="https://storage.googleapis.com/chatfuel-cms-staging/pic/lg_types_of_chatbots_2424fa847a/lg_types_of_chatbots_2424fa847a.png" alt="Adbot Logo" 
+    style="width: 85px; height: auto ; border-radius: 20px;"
+    /> 
+    <h1>Advance Bot (Adbot)</h1>
+  </header>
+
+  <!-- Main chat area -->
+  <main>
+    <div id="chat"></div>
+  </main>
+
+  <!-- Input area -->
+  <footer>
+    <input
+      id="userText"
+      type="text"
+      placeholder="Type a message..."
+      autocomplete="off"
+    />
+    <button id="sendBtn" disabled>
+      <!-- Send icon (paper plane) via Unicode; you can swap for an SVG if desired -->
+      📤 Send
+    </button>
+  </footer>
+
+  <script>
+    (function () {
+      // Deployed endpoint
+      const API_ENDPOINT =
+         "https://advance-chatbot-fast-api.onrender.com/chat";
+
+      let threadId = null;
+      let typingInterval = null;
+      let typingBubble = null;
+
+      const chatEl = document.getElementById("chat");
+      const userInput = document.getElementById("userText");
+      const sendBtn = document.getElementById("sendBtn");
+
+      // Enable send button only if there's text
+      userInput.addEventListener("input", () => {
+        sendBtn.disabled = userInput.value.trim().length === 0;
+      });
+
+      // Handle send button click
+      sendBtn.addEventListener("click", () => {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        // 1) Append user bubble immediately
+        appendBubble(text, "user");
+        userInput.value = "";
+        sendBtn.disabled = true;
+
+        // 2) Disable input box (make it less visible & non‐functional)
+        disableInput();
+
+        // 3) Show typing indicator (… cycling) until response arrives
+        showTypingIndicator();
+
+        // 4) Fetch AI response
+        fetchAIResponse(text);
+      });
+
+      // Also send on pressing Enter
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && userInput.value.trim()) {
+          sendBtn.click();
+        }
+      });
+
+      // Append a chat bubble to the chat area
+      function appendBubble(text, type) {
+        const bubble = document.createElement("div");
+        bubble.classList.add("bubble", type);
+        bubble.textContent = text;
+
+        const ts = document.createElement("span");
+        ts.classList.add("timestamp");
+        const now = new Date();
+        ts.textContent = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        bubble.appendChild(ts);
+
+        chatEl.appendChild(bubble);
+        scrollChatToBottom(); // Always scroll when a new bubble is added
+      }
+
+      // Disable input & button styling
+      function disableInput() {
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+        userInput.style.opacity = "0.6";
+        sendBtn.style.opacity = "0.6";
+      }
+
+      // Re-enable input & button styling
+      function enableInput() {
+        userInput.disabled = false;
+        sendBtn.disabled = true; // remain disabled until user types again
+        userInput.style.opacity = "1";
+        sendBtn.style.opacity = "1";
+        userInput.focus();
+      }
+
+      // Show a typing indicator that cycles “…”, “…..”, “…” etc.
+      function showTypingIndicator() {
+        typingBubble = document.createElement("div");
+        typingBubble.classList.add("bubble", "typing");
+        typingBubble.textContent = ""; // start empty
+        chatEl.appendChild(typingBubble);
+
+        let dotCount = 0;
+        typingInterval = setInterval(() => {
+          dotCount = (dotCount + 1) % 4; // 0 → 1 → 2 → 3 → 0 …
+          typingBubble.textContent = ".".repeat(dotCount);
+          scrollChatToBottom(); // keep scrolling as the dots update
+        }, 500);
+      }
+
+      // Remove typing indicator
+      function removeTypingIndicator() {
+        if (typingInterval) {
+          clearInterval(typingInterval);
+          typingInterval = null;
+        }
+        if (typingBubble) {
+          chatEl.removeChild(typingBubble);
+          typingBubble = null;
+        }
+      }
+
+      // Scroll chat container down to show latest message
+      function scrollChatToBottom() {
+        // Smooth scroll:
+        chatEl.scrollTo({
+          top: chatEl.scrollHeight,
+          behavior: "smooth"
+        });
+      }
+
+      // Send message to API and handle response
+      async function fetchAIResponse(message) {
+        try {
+          const response = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: message,
+              thread_id: threadId,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Server Error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          threadId = data.thread_id; // preserve thread for next turn
+
+          // 1) Remove the typing indicator
+          removeTypingIndicator();
+
+          // 2) Append the actual AI bubble
+          appendBubble(data.response, "ai");
+
+          // 3) Re-enable input area
+          enableInput();
+
+        } catch (err) {
+          // On error: remove typing indicator, show error bubble, re-enable input
+          removeTypingIndicator();
+          appendBubble(`Error: ${err.message}`, "error");
+          enableInput();
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
