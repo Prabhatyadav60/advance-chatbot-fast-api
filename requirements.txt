@@ -1,4 +1,4 @@
-fastapi[all]
+fastapi 
 uvicorn[standard] 
 python-dotenv 
 langchain
@@ -9,9 +9,9 @@ ultralytics
 pytesseract 
 Pillow 
 requests
-python-multipart
+multipart
 streamlit            
-langchain-core
+
 youtube-transcript-api
 
 
