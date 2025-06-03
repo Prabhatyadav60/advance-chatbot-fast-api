@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Independent Chatbot</title>
+  <style>
+   
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      color: #333;
+    }
+
+    
+    header {
+      background-color: #0066cc;
+      color: #fff;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+ 
+    #chat {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      position: relative;
+      line-height: 1.4;
+      word-wrap: break-word;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background-color: #007bff;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble.ai {
+      align-self: flex-start;
+      background-color: #e4e6eb;
+      color: #000;
+      border-bottom-left-radius: 4px;
+    }
+    .bubble.error {
+      align-self: flex-start;
+      background-color: #ffe5e5;
+      color: #a00;
+      border-bottom-left-radius: 4px;
+    }
+    .timestamp {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.7rem;
+      color: rgba(0, 0, 0, 0.4);
+      text-align: right;
+    }
+
+    
+    .input-bar {
+      display: flex;
+      padding: 12px 16px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-bar input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-bar input:focus {
+      border-color: #007bff;
+    }
+    .input-bar button {
+      background-color: #007bff;
+      border: none;
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .input-bar button:hover {
+      background-color: #005dbf;
+    }
+    .input-bar button:disabled {
+      background-color: #8ab7ff;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <h1>Independent Chatbot</h1>
+  </header>
+
+
+  <div id="chat"></div>
+
+
+  <div class="input-bar">
+    <input
+      id="userText"
+      type="text"
+      placeholder="Type a message..."
+      autocomplete="off"
+    />
+    <button id="sendBtn" disabled>Send</button>
+  </div>
+
+  <script>
+    (function () {
+      // Change this to your deployed endpoint
+      const API_ENDPOINT =
+        "https://advance-chatbot-fast-api.onrender.com/chat";
+
+      let threadId = null; 
+
+     
+      const chatEl = document.getElementById("chat");
+      const userInput = document.getElementById("userText");
+      const sendBtn = document.getElementById("sendBtn");
+
+      
+      userInput.addEventListener("input", () => {
+        sendBtn.disabled = userInput.value.trim().length === 0;
+      });
+
+     
+      sendBtn.addEventListener("click", () => {
+        const text = userInput.value.trim();
+        if (!text) return;
+        appendBubble(text, "user");
+        userInput.value = "";
+        sendBtn.disabled = true;
+        fetchAIResponse(text);
+      });
+
+      
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && userInput.value.trim()) {
+          sendBtn.click();
+        }
+      });
+
+     
+      function appendBubble(text, type) {
+        const bubble = document.createElement("div");
+        bubble.classList.add("bubble", type);
+        bubble.textContent = text;
+
+        
+        const ts = document.createElement("span");
+        ts.classList.add("timestamp");
+        const now = new Date();
+        ts.textContent = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        bubble.appendChild(ts);
+
+        chatEl.appendChild(bubble);
+        chatEl.scrollTop = chatEl.scrollHeight;
+      }
+
+      
+      async function fetchAIResponse(message) {
+        try {
+          const response = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: message,
+              thread_id: threadId,
+            }),
+          });
+
+          if (!response.ok) {
+            
+            throw new Error(`Server Error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          threadId = data.thread_id; // preserve for next turn
+          appendBubble(data.response, "ai");
+        } catch (err) {
+         
+          appendBubble(`Error: ${err.message}`, "error");
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
