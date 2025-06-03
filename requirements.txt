@@ -1,0 +1,17 @@
+fastapi 
+uvicorn[standard] 
+python-dotenv 
+langchain
+langchain-tavily
+langgraph       
+ultralytics        
+pytesseract 
+Pillow 
+requests
+multipart
+streamlit            
+
+youtube-transcript-api
+
+
+
