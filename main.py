@@ -4,28 +4,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-# Import the LangGraph runner
+
 from tools.chatbot_tools import run_chat_through_graph
 
-# -------------------------------------------------
-# 1) Single FastAPI app instance
-# -------------------------------------------------
+
 app = FastAPI(title="Chat API (CORS-Enabled)")
 
-# -------------------------------------------------
-# 2) Enable no-restriction CORS middleware
-# -------------------------------------------------
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],         # Allow any origin (all domains/files)
-    allow_credentials=True,      # Allow cookies/auth headers
-    allow_methods=["*"],         # Allow all HTTP methods
-    allow_headers=["*"],         # Allow all headers
+    allow_origins=["*"],         
+    allow_credentials=True,      
+    allow_methods=["*"],        
+    allow_headers=["*"],        
 )
 
-# -------------------------------------------------
-# 3) Request/Response Models for /chat endpoint
-# -------------------------------------------------
+
 class ChatRequest(BaseModel):
     """
     - message: the user’s new message
@@ -42,9 +36,6 @@ class ChatResponse(BaseModel):
     response: str
     thread_id: str
 
-# -------------------------------------------------
-# 4) /chat endpoint
-# -------------------------------------------------
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(req: ChatRequest):
     """
