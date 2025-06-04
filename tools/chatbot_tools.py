@@ -26,9 +26,7 @@ from youtube_transcript_api import (
 )
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 
-# ----------------------------------------------------------------------------------------
-# 1) LOAD ENVIRONMENT VARIABLES
-# ----------------------------------------------------------------------------------------
+
 load_dotenv()
 TAVILY_API_KEY      = os.getenv("TAVILY_API_KEY")
 GOOGLE_API_KEY      = os.getenv("GOOGLE_API_KEY")
@@ -36,12 +34,10 @@ OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 GMAIL_ADDRESS       = os.getenv("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD  = os.getenv("GMAIL_APP_PASSWORD")
 
-# ----------------------------------------------------------------------------------------
-# 2) HELPER FUNCTIONS
-# ----------------------------------------------------------------------------------------
-LOADED_TRANSCRIPTS = {}  # cache transcripts
 
-# More comprehensive regex to extract YouTube IDs from URLs
+LOADED_TRANSCRIPTS = {} 
+
+
 YOUTUBE_ID_REGEX = re.compile(
     r"""
     (?:https?://)?                # optional protocol
@@ -97,9 +93,7 @@ Please summarize the weather in a single, human-readable sentence. Include:
 Example: "The weather in London is clear sky with a temperature of 18.5°C, humidity at 56%, and wind speed of 3.6 m/s."
 """
 
-# ----------------------------------------------------------------------------------------
-# 3) TOOL IMPLEMENTATIONS
-# ----------------------------------------------------------------------------------------
+
 
 
 @tool(description="Fetch current weather for a given city.")
@@ -170,9 +164,7 @@ def get_youtube_transcript(video_url: str) -> str:
         text = entry.text.replace("\n", " ").strip()
         lines.append(f"[{ts}] {text}")
     return "\n".join(lines)
-# ----------------------------------------------------------------------------------------
-# 4) INITIALIZE TOOLS, LLM, MEMORY, AND LANGGRAPH
-# ----------------------------------------------------------------------------------------
+
 tool_search = TavilySearch(tavily_api_key=TAVILY_API_KEY, max_results=4)
 
 tools = [
@@ -186,7 +178,7 @@ tools = [
 memory = MemorySaver()
 os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
-# Initialize Gemini LLM
+
 llm = init_chat_model("google_genai:gemini-2.0-flash")
 llm_with_tools = llm.bind_tools(tools)
 
@@ -246,7 +238,7 @@ graph_builder.add_conditional_edges(
 graph_builder.add_edge("tools", "chatbot")
 graph_builder.add_edge(START, "chatbot")
 
-# Compile once at startup
+
 graph = graph_builder.compile(checkpointer=memory)
 
 
@@ -259,7 +251,7 @@ def run_chat_through_graph(user_message: str, thread_id: str = None) -> dict:
       - 'response': the final AI response
       - 'thread_id': the UUID used (either provided or newly generated)
     """
-    # System message to instruct the LLM about tool usage
+  
     system_msg = {
         "role": "system",
         "content": (
@@ -278,7 +270,7 @@ def run_chat_through_graph(user_message: str, thread_id: str = None) -> dict:
         )
     }
 
-    # Build the message list: system + user
+ 
     prompt = f"{user_message}"
     if thread_id is None:
         thread_id = str(uuid.uuid4())
@@ -294,7 +286,7 @@ def run_chat_through_graph(user_message: str, thread_id: str = None) -> dict:
         config=config,
     )
 
-    # Extract the final AIMessage
+   
     ai_text = None
     for msg in reversed(output["messages"]):
         if isinstance(msg, AIMessage):
@@ -302,7 +294,7 @@ def run_chat_through_graph(user_message: str, thread_id: str = None) -> dict:
             break
 
     if ai_text is None:
-        # fallback: return raw tool outputs joined
+      
         ai_text = json.dumps([m.content for m in output["messages"]])
 
     return {"response": ai_text, "thread_id": thread_id}
