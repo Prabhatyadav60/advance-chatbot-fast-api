@@ -1,6 +1,12 @@
 # Advance Bot (Adbot)
 
 Advance Bot (Adbot) is an advanced chatbot built with FastAPI and powered by Google’s Gemini language model via the LangGraph framework. It integrates multiple tools—such as weather lookup, YouTube transcript retrieval, email sending, OCR, and image recognition—into a single, stateful conversational agent. The frontend is a responsive, clean chat interface served via an `index.html` page, allowing real-time interaction with the AI.
+## Frontend (FEATURES:  Mail sending support, Real time News/general query, Youtube video analysis, Weather report, Iimage analysis)
+![image](https://github.com/user-attachments/assets/fa7295bd-1bbe-436c-bbba-2547e22d24c7)
+## Image Analysis 
+![image](https://github.com/user-attachments/assets/b717e266-eb6e-4aab-a977-04024949fa03)
+## Youtube-interaction
+![image](https://github.com/user-attachments/assets/855ddfbe-8742-4b4b-96e7-6ecd451b3efd)
 
 ## Features
 
