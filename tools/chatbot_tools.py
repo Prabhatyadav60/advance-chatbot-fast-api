@@ -96,7 +96,7 @@ def send_email(recipient: str, subject: str, body: str) -> str:
     except Exception as e:
         return f"Error sending email: {e}"
 
-@tool(description="Generate a single-page website using HTML, CSS, and JavaScript based on the provided specification.")
+@tool(description="Generate a good looking single-page website using HTML, CSS, and JavaScript based on the provided specification.")
 def generate_website(spec: str) -> str:
     prompt = (
         "Create a single-page website using HTML, CSS, and JavaScript based on the following specification:\n\n"
