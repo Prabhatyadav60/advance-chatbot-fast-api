@@ -12,7 +12,7 @@ requests
 multipart
 streamlit            
 
-youtube-transcript-api
+
 
 
 
